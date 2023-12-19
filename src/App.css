@@ -1,7 +1,11 @@
 .App {
+  width: auto;
+  display: flex; 
+  /* Enables Flexbox */
   text-align: center;
+  max-width: 1800px;
+  min-width: 393px;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -28,11 +32,30 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.container {
+  max-width: 99%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.card-grid-container {
+  padding: 30px;
+  padding-top: 30px;
+}
+
+.my-masonry-grid {
+  display: flex;
+  /* margin-left: -10px;  */
+  margin-bottom: 0px;
+  margin: 0px;
+  width: auto;
+  column-gap: 30px;
+}
+
+#cards {
+  flex-grow: 1; /* This container will take up the remaining space */
+  padding-top: 20px;
+  width: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
 }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Masonry from 'react-masonry-css';
+import AdminCard from './AdminCard';
 
 export default function AdminTrustsList({}) {
     const [trusts, setTrusts] = useState([]);
@@ -23,21 +25,23 @@ export default function AdminTrustsList({}) {
 
         fetchTrusts();
     }, []);
+    console.log(trusts)
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
-            <h2>Trusts</h2>
-            <ul>
-                {trusts.map((trust, index) => (
-                    <li key={index}>
-                        {/* Display trust data here. Adjust based on trust object structure */}
-                        Trust Name: {trust.trust_name}
-                    </li>
-                ))}
-            </ul>
+    <div className="card-grid-container">
+    <Masonry
+        breakpointCols={1}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column">
+        {trusts.map(dataObject => (
+          <div key={dataObject.id} className="masonry-item">
+            <AdminCard dataObject={dataObject} />
+          </div>
+        ))}
+      </Masonry>
         </div>
     );
 }

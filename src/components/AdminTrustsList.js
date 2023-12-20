@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Masonry from 'react-masonry-css';
-import AdminCard from './AdminCard';
+import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import AdminTrustSidebar from './AdminSidebar';
 
 export default function AdminTrustsList({}) {
     const [trusts, setTrusts] = useState([]);
@@ -31,18 +33,27 @@ export default function AdminTrustsList({}) {
     if (error) return <div>Error: {error}</div>;
 
     return (
-    <div className="card-grid-container">
-    <Masonry
-        breakpointCols={1}
-        className="my-masonry-grid"
-        columnClassName="my-masonry-grid_column">
-        {trusts.map(dataObject => (
-          <div key={dataObject.id} className="masonry-item">
-            <AdminCard dataObject={dataObject} />
+        <div className='trust-container'>
+    
+        <Container className='trust-sidebar'>
+        <li><a href='#'>Trusts</a></li>
+        <li><a href='#'>Beneficiaries</a></li>
+        <li><a href='#'>Assets</a></li>
+        <li><a href='#'>Users</a></li>
+        </Container>    
+       
+        <Container className='trust-middle'>
+            <ListGroup>
+                    {trusts.map(dataObject => (
+                          <Link to={`/admin/trust/${dataObject.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListGroup.Item key={dataObject.id} className="list-group-item-container">
+                            <h3>{dataObject.trust_name}</h3>
+                            
+                        </ListGroup.Item>
+                        </Link>
+                    ))}
+                </ListGroup>
+          </Container>
           </div>
-        ))}
-      </Masonry>
-        </div>
     );
 }
-

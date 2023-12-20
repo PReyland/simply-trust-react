@@ -5,7 +5,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navbar, Nav, Offcanvas, Button, Form, InputGroup, Container } from 'react-bootstrap';
 
 import AdminTrustsList from './components/AdminTrustsList';
-import AdminTrustOverview from './components/AdminTrustOverview';
+import AdminTrust from './components/AdminTrust';
+
 
 
 function App() {
@@ -14,11 +15,11 @@ function App() {
 <Container>
 <BrowserRouter>
       <Routes>
-        <Route path="/admin/" element={<AdminTrustsList />} />
-        <Route path="/admin/trust/:id" element={<AdminTrustOverview />} />
+        <Route path="/admin/trust" element={<AdminTrustsList />} />
+        <Route path="/admin/trust/:id*" element={<AdminTrust />} />
       </Routes>
     </BrowserRouter>
-    </Container>
+</Container>
 
     </div>
   );

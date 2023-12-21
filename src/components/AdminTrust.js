@@ -11,6 +11,7 @@ import AdminTrustAssets from './AdminTrustAssets';
 import AdminTrustsList from './AdminTrustsList';
 import AdminTrustUsers from './AdminTrustUsers';
 import AdminTrustOverview from './AdminTrustOverview';
+import AdminNavbar from './AdminNavbar';
 
 export default function AdminTrust({}) {
     const [trust, setTrust] = useState(null);
@@ -50,6 +51,7 @@ export default function AdminTrust({}) {
 
     return (
     <div>
+
         <h1>{trust ? trust.trust_name : 'Loading Trust...'}</h1>
         <p>Created: {trust ? trust.created_at : 'Loading...'}</p>
         <p>Updated: {trust ? trust.updated_at : 'Loading...'}</p>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, ListGroup, Form, Button } from 'react-bootstrap';
+import AdminCardUser from './AdminCardUser';
 
 export default function AdminTrustUsers() {
   const [users, setUsers] = useState({ owners: [], trustees: [], counsel: [] });
@@ -53,7 +54,6 @@ export default function AdminTrustUsers() {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          // Include other headers like authorization if needed
         },
         body: JSON.stringify(editableUser),
       });
@@ -171,16 +171,10 @@ export default function AdminTrustUsers() {
         </Form>
       ) : (
         <>
-           <h3>{user.user_firstname} {user.user_lastname}</h3>
-        <p>Email: {user.user_email}</p>
-        <p>Phone 1: {user.user_phone1}</p>
-        <p>Phone 2: {user.user_phone2}</p>
-        <p>Address 1: {user.user_addressline1}</p>
-        <p>Address 2: {user.user_addressline2}</p>
-        <p>City: {user.user_city}</p>
-        <p>Zip Code: {user.user_zipcode}</p>
-        <Button onClick={() => handleEditClick(user)}>Edit</Button>
-        <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
+          <h3>{user.user_firstname} {user.user_lastname}</h3>
+          <p>{user.user_phone1} {user.user_email}</p>
+          <Button onClick={() => handleEditClick(user)}>Edit</Button>
+          <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
         </>
       )}
     </ListGroup.Item>
@@ -191,16 +185,28 @@ export default function AdminTrustUsers() {
       <h2>Users:</h2>
       <h3>Owners</h3>
       <ListGroup>
-        {users.owners.map(user => renderUserItem(user, 'owners'))}
-      </ListGroup>
+      {users.owners.map(user => (
+        <ListGroup.Item key={user.id} className="list-group-item-container">
+          <AdminCardUser userId={user.id} />
+        </ListGroup.Item>
+      ))}
+    </ListGroup>
       <h3>Trustees</h3>
       <ListGroup>
-        {users.trustees.map(user => renderUserItem(user, 'trustees'))}
-      </ListGroup>
+      {users.trustees.map(user => (
+        <ListGroup.Item key={user.id} className="list-group-item-container">
+          <AdminCardUser userId={user.id} />
+        </ListGroup.Item>
+      ))}
+    </ListGroup>
       <h3>Counsel</h3>
       <ListGroup>
-        {users.counsel.map(user => renderUserItem(user, 'counsel'))}
-      </ListGroup>
+      {users.counsel.map(user => (
+        <ListGroup.Item key={user.id} className="list-group-item-container">
+          <AdminCardUser userId={user.id} />
+        </ListGroup.Item>
+      ))}
+    </ListGroup>
     </Container>
   );
 }

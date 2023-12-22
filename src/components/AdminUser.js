@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, ListGroup, Modal } from 'react-bootstrap';
+import { Container, Form,  Modal, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import AdminTrustSidebar from './AdminSidebar';
+import AdminCardUser from './AdminCardUser';
 
 export default function AdminUser() {
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState({
+        accepted_terms: false,
+        counseled_trusts: [],
+        id: null,
+        owned_trusts: [],
+        trusted_trusts: [],
+        user_addressline1: '',
+        user_addressline2: '',
+        user_city: '',
+        user_email: '',
+        user_firstname: '',
+        user_lastname: '',
+        user_phone1: '',
+        user_phone2: '',
+        user_zipcode: ''
+    });
     
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -37,19 +55,20 @@ export default function AdminUser() {
             fetchUserDetails();
         }
     }, [id]);
+
     
 
-    const handleEdit = (trustId, role) => {
+    const handleTrustEdit = (trustId, role) => {
         console.log(`Edit trust ${trustId} with role ${role}`);
         // Implement your edit logic here
     };
 
-    const handleRemove = (trustId, role) => {
+    const handleTrustRemove = (trustId, role) => {
         setSelectedTrust({ trustId, role });
         setShowConfirmation(true);
     };
 
-    const confirmRemove = async () => {
+    const confirmTrustRemove = async () => {
         const { trustId, role } = selectedTrust;
     
         try {
@@ -92,40 +111,53 @@ export default function AdminUser() {
             }
         });
     };
-    
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
+        <div className='trust-container'>
+    <Container className='trust-sidebar'>
+    <AdminTrustSidebar />
+    </Container>    
+    <Container className='trust-middle'>
+        <AdminCardUser userId={user.id} />
             <div className='trust-container'>
                 <ListGroup>
                     <p><strong>Owned Trusts:</strong></p>
                     {user.owned_trusts.map(trust => (
+                    
                         <ListGroup.Item key={trust.id} className="list-group-item-container">
+                             <Link to={`/admin/trust/${trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <h3>{trust.trust_name}</h3>
-                            <Button variant="primary" onClick={() => handleEdit(trust.id, 'owner')}>Edit</Button>
-                            <Button variant="danger" onClick={() => handleRemove(trust.id, 'owner')}>Remove</Button>
+                            </Link>
+                            <Button variant="danger" onClick={() => handleTrustRemove(trust.id, 'owner')}>Remove</Button>
                         </ListGroup.Item>
+                      
                     ))}
 
                     <p><strong>Trusted Trusts:</strong></p>
                     {user.trusted_trusts.map(trust => (
+
                         <ListGroup.Item key={trust.id} className="list-group-item-container">
+                        <Link to={`/admin/trust/${trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <h3>{trust.trust_name}</h3>
-                            <Button variant="primary" onClick={() => handleEdit(trust.id, 'trustee')}>Edit</Button>
-                            <Button variant="danger" onClick={() => handleRemove(trust.id, 'trustee')}>Remove</Button>
+                            </Link>
+                            <Button variant="danger" onClick={() => handleTrustRemove(trust.id, 'trustee')}>Remove</Button>
                         </ListGroup.Item>
+            
                     ))}
 
                     <p><strong>Counseled Trusts:</strong></p>
                     {user.counseled_trusts.map(trust => (
-                        <ListGroup.Item key={trust.id} className="list-group-item-container">
+
+                           <ListGroup.Item key={trust.id} className="list-group-item-container">
+                           <Link to={`/admin/trust/${trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <h3>{trust.trust_name}</h3>
-                            <Button variant="primary" onClick={() => handleEdit(trust.id, 'counsel')}>Edit</Button>
-                            <Button variant="danger" onClick={() => handleRemove(trust.id, 'counsel')}>Remove</Button>
+                            </Link>
+                            <Button variant="danger" onClick={() => handleTrustRemove(trust.id, 'counsel')}>Remove</Button>
                         </ListGroup.Item>
+            
                     ))}
                 </ListGroup>
             </div>
@@ -139,11 +171,12 @@ export default function AdminUser() {
                     <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
                         Cancel
                     </Button>
-                    <Button variant="danger" onClick={confirmRemove}>
+                    <Button variant="danger" onClick={confirmTrustRemove}>
                         Remove
                     </Button>
                 </Modal.Footer>
             </Modal>
+            </Container>
         </div>
     );
 }

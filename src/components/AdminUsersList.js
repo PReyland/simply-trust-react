@@ -42,11 +42,12 @@ export default function AdminUsersList({}) {
         <Container className='trust-middle'>
             <ListGroup>
                     {users.map(dataObject => (
-                       
+                        <Link to={`/admin/user/${dataObject.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <ListGroup.Item key={dataObject.id} className="list-group-item-container">
                             <h3>{dataObject.user_firstname} {dataObject.user_lastname}</h3>
                             
                         </ListGroup.Item>
+                        </Link>
 
                     ))}
                 </ListGroup>

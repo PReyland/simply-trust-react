@@ -37,11 +37,7 @@ export default function AdminTrustBeneficiaries({}) {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
-    console.log(trust)
-
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-
+  
     let benHuman = trust && trust.beneficiaries ? 
                    trust.beneficiaries.filter(ben => ben.ben_type === "Human") : [];
     let benOrganization = trust && trust.beneficiaries ? 

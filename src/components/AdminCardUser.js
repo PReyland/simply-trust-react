@@ -8,6 +8,8 @@ export default function AdminCardUser({ userId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log("halper", userId)
+
   useEffect(() => {
     console.log("useEffect triggered for userId", userId);
     const fetchUserData = async () => {

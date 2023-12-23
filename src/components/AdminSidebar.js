@@ -26,6 +26,7 @@ export default function AdminTrustSidebar() {
         <>
           <li><Link to={`/admin/trusts`} style={{ textDecoration: 'none', color: 'inherit' }}>All Trusts</Link></li>
           <li><Link to={`/admin/users`} style={{ textDecoration: 'none', color: 'inherit' }}>All Users</Link></li>
+          <li><Link to={`/admin/beneficiaries`} style={{ textDecoration: 'none', color: 'inherit' }}>All Beneficiaries</Link></li>
         </>
       )}
     </div>

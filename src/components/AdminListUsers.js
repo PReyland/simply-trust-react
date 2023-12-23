@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Masonry from 'react-masonry-css';
 import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import AdminTrustSidebar from './AdminSidebar';
 
-export default function AdminUsersList({}) {
+
+export default function AdminListUsers({}) {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);

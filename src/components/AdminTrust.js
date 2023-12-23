@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AdminTrustSidebar from './AdminSidebar';
 import AdminTrustBeneficiaries from './AdminTrustBeneficiaries';
 import AdminTrustAssets from './AdminTrustAssets';
-import AdminTrustsList from './AdminTrustsList';
+import AdminListTrusts from './AdminListTrusts';
 import AdminTrustUsers from './AdminTrustUsers';
 import AdminTrustOverview from './AdminTrustOverview';
 import AdminNavbar from './AdminNavbar';

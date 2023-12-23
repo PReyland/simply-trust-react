@@ -5,6 +5,7 @@ import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'rea
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AdminTrustSidebar from './AdminSidebar';
+import AdminCardBeneficiary from './AdminCardBeneficiary';
 
 export default function AdminTrustBeneficiaries({}) {
     const [trust, setTrust] = useState(null);
@@ -46,37 +47,6 @@ export default function AdminTrustBeneficiaries({}) {
     console.log(benOrganization)
     console.log(benHuman)
 
-    const renderTooltip = (dataObject) => {
-        // Check if the beneficiary is a human
-        if (dataObject.ben_type === "Human") {
-          return (
-            <Tooltip id={`tooltip-human-${dataObject.id}`}>
-              <p>Email: {dataObject.human.ben_email}</p>
-              <p>Phone 1: {dataObject.ben_phone1}</p>
-              <p>Phone 2: {dataObject.ben_phone2}</p>
-              <p>Address: {dataObject.ben_addressline1} {dataObject.ben_addressline2}</p>
-              <p>Location: {dataObject.ben_city}, {dataObject.ben_state} {dataObject.ben_zipcode}</p>
-            </Tooltip>
-          );
-        }
-
-        // If the beneficiary is an organization
-        if (dataObject.ben_type === "Organization") {
-          return (
-            <Tooltip id={`tooltip-org-${dataObject.id}`}>
-              <p>Organization Name: {dataObject.organization.ben_org_name}</p>
-              <p>Organization Type: {dataObject.organization.ben_org_type}</p>
-              <p>Phone 1: {dataObject.ben_phone1}</p>
-              <p>Phone 2: {dataObject.ben_phone2}</p>
-              <p>Address: {dataObject.ben_addressline1} {dataObject.ben_addressline2}</p>
-              <p>Location: {dataObject.ben_city}, {dataObject.ben_state} {dataObject.ben_zipcode}</p>
-            </Tooltip>
-          );
-        }
-      
-        return null;
-      };
-
     return (
 
        
@@ -89,35 +59,20 @@ export default function AdminTrustBeneficiaries({}) {
         <ListGroup>
                 {benHuman.map(dataObject => (
                     <ListGroup.Item key={dataObject.id} className="list-group-item-container">
-                        <h3>{dataObject.human.ben_first_name} {dataObject.human.ben_last_name}</h3>
-                        <p>Birthdate: {dataObject.human.ben_birthdate}</p>
-                        <OverlayTrigger
-                          placement="right"
-                          delay={{ show: 250, hide: 400 }}
-                          overlay={renderTooltip(dataObject)}
-                        >
-                          <Button variant="success">info</Button>
-                        </OverlayTrigger>
-                
+                <AdminCardBeneficiary beneficiaryId={dataObject.id}  />
+                {console.log(dataObject.id)}
                     </ListGroup.Item>
                 ))}
             </ListGroup>
             <p><strong>Organizations:</strong></p>
-            <ListGroup>
+            {/* <ListGroup>
                 {benOrganization.map(dataObject => (
                     <ListGroup.Item key={dataObject.id} className="list-group-item-container">
-                        <h3>{dataObject.organization.ben_org_name}</h3>
-                        <OverlayTrigger
-                          placement="right"
-                          delay={{ show: 250, hide: 400 }}
-                          overlay={renderTooltip(dataObject)}
-                        >
-                          <Button variant="success">info</Button>
-                        </OverlayTrigger>
-                        <FontAwesomeIcon icon="fa-solid fa-circle-info" />
+                <AdminCardBeneficiary userId={dataObject.id}  />
+                {console.log(dataObject.id)}
                     </ListGroup.Item>
                 ))}
-            </ListGroup>
+            </ListGroup> */}
       </Container>
 
         </div>

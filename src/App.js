@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback, createContext } from 'react';
 import { useLocation, BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navbar, Nav, Offcanvas, Button, Form, InputGroup, Container } from 'react-bootstrap';
 
-import AdminTrustsList from './components/AdminTrustsList';
+import AdminListTrusts from './components/AdminListTrusts';
 import AdminTrust from './components/AdminTrust';
-import AdminUsersList from './components/AdminUsersList';
+import AdminListUsers from './components/AdminListUsers';
 import AdminNavbar from './components/AdminNavbar';
 import AdminUser from './components/AdminUser';
+import AdminListBeneficiaries from './components/AdminListBeneficiaries';
 
 
 
@@ -38,9 +39,10 @@ function App() {
   <AdminNavbarWrapper />
       <Routes>
     
-        <Route path="/admin/" element={<AdminTrustsList />} />
-        <Route path="/admin/trusts" element={<AdminTrustsList />} />
-        <Route path="/admin/users" element={<AdminUsersList />} />
+        <Route path="/admin/" element={<AdminListTrusts />} />
+        <Route path="/admin/trusts" element={<AdminListTrusts />} />
+        <Route path="/admin/beneficiaries" element={<AdminListTrusts />} />
+        <Route path="/admin/users" element={<AdminListUsers />} />
         <Route path="/admin/user/:id/*" element={<AdminUser />} />
         <Route path="/admin/trust/:id/*" element={<AdminTrust />} />
       </Routes>

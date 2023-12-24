@@ -4,12 +4,13 @@ import { useEffect, useState, useCallback, createContext } from 'react';
 import { useLocation, BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navbar, Nav, Offcanvas, Button, Form, InputGroup, Container } from 'react-bootstrap';
 
-import AdminListTrusts from './components/AdminListTrusts';
-import AdminTrust from './components/AdminTrust';
-import AdminListUsers from './components/AdminListUsers';
 import AdminNavbar from './components/AdminNavbar';
-import AdminUser from './components/AdminUser';
+import AdminListTrusts from './components/AdminListTrusts';
+import AdminSingleTrust from './components/AdminSingleTrust';
+import AdminListUsers from './components/AdminListUsers';
+import AdminSingleUser from './components/AdminSingleUser';
 import AdminListBeneficiaries from './components/AdminListBeneficiaries';
+import AdminSingleBeneficiary from './components/AdminSingleBeneficiary';
 
 
 
@@ -38,13 +39,13 @@ function App() {
   <BrowserRouter>
   <AdminNavbarWrapper />
       <Routes>
-    
         <Route path="/admin/" element={<AdminListTrusts />} />
         <Route path="/admin/trusts" element={<AdminListTrusts />} />
-        <Route path="/admin/beneficiaries" element={<AdminListTrusts />} />
+        <Route path="/admin/beneficiaries" element={<AdminListBeneficiaries />} />
         <Route path="/admin/users" element={<AdminListUsers />} />
-        <Route path="/admin/user/:id/*" element={<AdminUser />} />
-        <Route path="/admin/trust/:id/*" element={<AdminTrust />} />
+        <Route path="/admin/user/:id/*" element={<AdminSingleUser />} />
+        <Route path="/admin/trust/:id/*" element={<AdminSingleTrust />} />
+        <Route path="/admin/beneficiary/:id/*" element={<AdminSingleBeneficiary />} />
       </Routes>
   </BrowserRouter>
 </Container>

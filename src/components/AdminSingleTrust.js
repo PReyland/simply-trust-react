@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -13,17 +13,19 @@ import AdminTrustUsers from './AdminTrustUsers';
 import AdminTrustOverview from './AdminTrustOverview';
 import AdminNavbar from './AdminNavbar';
 
-export default function AdminTrust({}) {
+export default function AdminSingleTrust({}) {
     const [trust, setTrust] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     let { id } = useParams(); // Get the ID from the URL
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchTrustDetails = async () => {
             try {
                 // Use the ID in the URL for fetching specific trust details
-                const response = await fetch(`http://127.0.0.1:5555/trusts/${id}`);
+                const response = await fetch(`http://127.0.0.1:5555/trust/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -41,10 +43,15 @@ export default function AdminTrust({}) {
         }
     }, [id]); // Rerun the effect if the ID changes
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
-    console.log(trust)
+    const location = useLocation();
+
+
+    const navigateToTrust = (change) => {
+        const newId = parseInt(id) + change;
+        const newPath = location.pathname.replace(`/trust/${id}`, `/trust/${newId}`);
+        navigate(newPath);
+    };
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -56,7 +63,8 @@ export default function AdminTrust({}) {
         <p>Created: {trust ? trust.created_at : 'Loading...'}</p>
         <p>Updated: {trust ? trust.updated_at : 'Loading...'}</p>
        
-    
+        <Button onClick={() => navigateToTrust(-1)} disabled={parseInt(id) <= 1}>Previous</Button>
+                <Button onClick={() => navigateToTrust(1)}>Next</Button>
       <div className='trust-container'>
     
     <Container className='trust-sidebar'>

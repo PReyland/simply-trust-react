@@ -3,7 +3,6 @@ import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'rea
 import { Link } from 'react-router-dom';
 import AdminTrustSidebar from './AdminSidebar';
 
-
 export default function AdminListUsers({}) {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);

@@ -17,7 +17,7 @@ export default function AdminTrustBeneficiaries({}) {
         const fetchTrustDetails = async () => {
             try {
                 // Use the ID in the URL for fetching specific trust details
-                const response = await fetch(`http://127.0.0.1:5555/trusts/${id}`);
+                const response = await fetch(`http://127.0.0.1:5555/trust/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -65,14 +65,14 @@ export default function AdminTrustBeneficiaries({}) {
                 ))}
             </ListGroup>
             <p><strong>Organizations:</strong></p>
-            {/* <ListGroup>
+            <ListGroup>
                 {benOrganization.map(dataObject => (
                     <ListGroup.Item key={dataObject.id} className="list-group-item-container">
-                <AdminCardBeneficiary userId={dataObject.id}  />
+                  <AdminCardBeneficiary beneficiaryId={dataObject.id}  />
                 {console.log(dataObject.id)}
                     </ListGroup.Item>
                 ))}
-            </ListGroup> */}
+            </ListGroup>
       </Container>
 
         </div>

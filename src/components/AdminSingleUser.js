@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Form,  Modal, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import AdminTrustSidebar from './AdminSidebar';
 import AdminCardUser from './AdminCardUser';
 
-export default function AdminUser() {
+export default function AdminSingleUser() {
     const [user, setUser] = useState({
         accepted_terms: false,
         counseled_trusts: [],
@@ -29,6 +29,8 @@ export default function AdminUser() {
     const [selectedTrust, setSelectedTrust] = useState(null); 
     const [showConfirmation, setShowConfirmation] = useState(false); 
     let { id } = useParams(); 
+    const navigate = useNavigate();
+
 
 
     useEffect(() => {
@@ -57,6 +59,10 @@ export default function AdminUser() {
     }, [id]);
 
     
+    const navigateToUser = (change) => {
+        const newId = parseInt(id) + change;
+        navigate(`/admin/user/${newId}/*`);
+    };
 
     const handleTrustEdit = (trustId, role) => {
         console.log(`Edit trust ${trustId} with role ${role}`);
@@ -121,8 +127,11 @@ export default function AdminUser() {
     <AdminTrustSidebar />
     </Container>    
     <Container className='trust-middle'>
+    <Button onClick={() => navigateToUser(-1)} disabled={parseInt(id) <= 1}>Previous</Button>
+                <Button onClick={() => navigateToUser(1)}>Next</Button>
         <AdminCardUser userId={user.id} />
             <div className='trust-container'>
+
                 <ListGroup>
                     <p><strong>Owned Trusts:</strong></p>
                     {user.owned_trusts.map(trust => (

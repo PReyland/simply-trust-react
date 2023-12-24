@@ -15,7 +15,7 @@ export default function AdminTrustAssets({}) {
         const fetchTrustDetails = async () => {
             try {
                 // Use the ID in the URL for fetching specific trust details
-                const response = await fetch(`http://127.0.0.1:5555/trusts/${id}/physicalassets`);
+                const response = await fetch(`http://127.0.0.1:5555/trust/${id}/physicalassets`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

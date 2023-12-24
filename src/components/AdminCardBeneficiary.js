@@ -11,7 +11,7 @@ export default function AdminCardBeneficiary({ beneficiaryId }) {
   useEffect(() => {
     const fetchBeneficiaryData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5555/beneficiaries/human/${beneficiaryId}`);
+        const response = await fetch(`http://127.0.0.1:5555/beneficiary/${beneficiaryId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -34,12 +34,11 @@ export default function AdminCardBeneficiary({ beneficiaryId }) {
     console.log(`Input changed - Name: ${name}, Value: ${value}`);
 
     setEditableBeneficiary(prev => {
+        const nameParts = name.split('.');
+        
         // Check if the name attribute contains a dot, indicating nested data
-        if (name.includes('.')) {
-            // Split the name into its parts (e.g., "human.ben_firstname" becomes ["human", "ben_firstname"])
-            const [parent, child] = name.split('.');
-
-            // Update the nested property
+        if (nameParts.length === 2) {
+            const [parent, child] = nameParts;
             return {
                 ...prev,
                 [parent]: {
@@ -53,53 +52,99 @@ export default function AdminCardBeneficiary({ beneficiaryId }) {
         return { ...prev, [name]: value };
     });
 };
-
   console.log("editben!", editableBeneficiary)
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://127.0.0.1:5555/beneficiaries/human/${beneficiaryId}`;
-
-    // Prepare the data to be patched
+  
+    let url;
     const dataToPatch = {};
-    for (const key in editableBeneficiary) {
-        if (key === 'human') {
-            // Handle nested human object
-            const humanData = editableBeneficiary[key];
-            for (const nestedKey in humanData) {
-                if (humanData[nestedKey] !== initialBeneficiary[key][nestedKey]) {
-                    dataToPatch[nestedKey] = humanData[nestedKey];
-                }
-            }
-        } else if (editableBeneficiary[key] !== initialBeneficiary[key]) {
-            // Handle top-level properties
-            dataToPatch[key] = editableBeneficiary[key];
+  
+    // Handling for 'Human' type
+    if (editableBeneficiary.ben_type === 'Human') {
+      url = `http://127.0.0.1:5555/beneficiaries/human/${beneficiaryId}`;
+      const humanData = editableBeneficiary.human;
+  
+      for (const nestedKey in humanData) {
+        if (humanData[nestedKey] !== initialBeneficiary.human[nestedKey]) {
+          dataToPatch[nestedKey] = humanData[nestedKey];
         }
-    }
+      }
+    } 
 
+    else if (editableBeneficiary.ben_type === 'Organization') {
+        url = `http://127.0.0.1:5555/beneficiaries/organization/${beneficiaryId}`;
+        const organizationData = editableBeneficiary.organization;
+      
+        for (const nestedKey in organizationData) {
+          if (organizationData[nestedKey] !== initialBeneficiary.organization[nestedKey]) {
+            dataToPatch[nestedKey] = organizationData[nestedKey];
+          }
+        }
+      }
+    // // Handling for 'Organization' type
+    // else if (editableBeneficiary.ben_type === 'Organization') {
+    //   url = `http://127.0.0.1:5555/beneficiaries/organization/${beneficiaryId}`;
+    //   const organizationData = editableBeneficiary.organization;
+    //   const orgDataToPatch = {};
+    //   console.log("org data to patch", orgDataToPatch)
+  
+    //   for (const nestedKey in organizationData) {
+    //     if (organizationData[nestedKey] !== initialBeneficiary.organization[nestedKey]) {
+    //       orgDataToPatch[nestedKey] = organizationData[nestedKey];
+    //     }
+    //   }
+    //   if (Object.keys(orgDataToPatch).length > 0) {
+    //     dataToPatch.organization = orgDataToPatch;
+    //   }
+    // }
+
+    // Handle top-level properties for both types
+    const topLevelKeys = ['ben_addressline1', 'ben_addressline2', 'ben_city', 'ben_state', 'ben_zipcode', 'ben_phone1', 'ben_phone2'];
+    topLevelKeys.forEach(key => {
+      if (editableBeneficiary[key] !== initialBeneficiary[key]) {
+        dataToPatch[key] = editableBeneficiary[key];
+      }
+    });
+  
     try {
-        const response = await fetch(url, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToPatch),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        console.log("User update successful");
-        setIsEditing(false); // Close edit mode after successful update
+        console.log('data patch array', dataToPatch)
+       
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToPatch),
+       
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      console.log("Beneficiary update successful");
+      setIsEditing(false); // Close edit mode after successful update
     } catch (error) {
-        console.error("Failed to update user:", error);
+      console.error("Failed to update beneficiary:", error);
     }
-};
+  };
+  
+  
+const renderEditMode = () => {
+    // Check the beneficiary type and render the corresponding form
+    if (editableBeneficiary.ben_type === 'Human') {
+      return renderHumanForm();
+    } else if (editableBeneficiary.ben_type === 'Organization') {
+      return renderOrganizationForm();
+    } else {
+      return <div>Unknown Beneficiary Type</div>;
+    }
+  };
 
-
-  const renderEditMode = () => (
-<Form onSubmit={handleFormSubmit}>
+  
+  const renderHumanForm = () => (
+  <Form onSubmit={handleFormSubmit}>
   {/* First Name */}
   <Form.Group>
     <Form.Label>First Name</Form.Label>
@@ -236,28 +281,166 @@ export default function AdminCardBeneficiary({ beneficiaryId }) {
   <Button type="submit" className="mr-2">Save</Button>
   <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
 </Form>
+);
 
+const renderOrganizationForm = () => (
+        <Form onSubmit={handleFormSubmit}>
+          {/* Organization Name */}
+          <Form.Group>
+            <Form.Label>Organization Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="organization.ben_org_name"
+              value={editableBeneficiary.organization?.ben_org_name || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Organization Type */}
+          <Form.Group>
+            <Form.Label>Organization Type</Form.Label>
+            <Form.Control
+              type="text"
+              name="organization.ben_org_type"
+              value={editableBeneficiary.organization?.ben_org_type || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Address Line 1 */}
+          <Form.Group>
+            <Form.Label>Address Line 1</Form.Label>
+            <Form.Control
+              type="text"
+              name="ben_addressline1"
+              value={editableBeneficiary.ben_addressline1 || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Address Line 2 */}
+          <Form.Group>
+            <Form.Label>Address Line 2</Form.Label>
+            <Form.Control
+              type="text"
+              name="ben_addressline2"
+              value={editableBeneficiary.ben_addressline2 || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* City */}
+          <Form.Group>
+            <Form.Label>City</Form.Label>
+            <Form.Control
+              type="text"
+              name="ben_city"
+              value={editableBeneficiary.ben_city || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* State */}
+          <Form.Group>
+            <Form.Label>State</Form.Label>
+            <Form.Control
+              type="text"
+              name="ben_state"
+              value={editableBeneficiary.ben_state || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Zip Code */}
+          <Form.Group>
+            <Form.Label>Zip Code</Form.Label>
+            <Form.Control
+              type="text"
+              name="ben_zipcode"
+              value={editableBeneficiary.ben_zipcode || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Phone 1 */}
+          <Form.Group>
+            <Form.Label>Phone 1</Form.Label>
+            <Form.Control
+              type="tel"
+              name="ben_phone1"
+              value={editableBeneficiary.ben_phone1 || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Phone 2 */}
+          <Form.Group>
+            <Form.Label>Phone 2</Form.Label>
+            <Form.Control
+              type="tel"
+              name="ben_phone2"
+              value={editableBeneficiary.ben_phone2 || ''}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+      
+          {/* Buttons */}
+          <Button type="submit" className="mr-2">Save</Button>
+          <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+        </Form>
+      );
+      
+
+
+      const renderViewMode = () => {
+        // Check the beneficiary type and render the corresponding view
+        if (editableBeneficiary.ben_type === 'Human') {
+          return renderHumanView();
+        } else if (editableBeneficiary.ben_type === 'Organization') {
+          return renderOrganizationView();
+        } else {
+          return <div>Unknown Beneficiary Type</div>;
+        }
+      };      
+
+      const renderHumanView = () => (
+            <Card>
+            <Card.Body>
+                <Card.Title>{editableBeneficiary.human?.ben_firstname} {editableBeneficiary.human?.ben_lastname}</Card.Title>
+                <Card.Text>
+                <strong>Email:</strong> {editableBeneficiary.human?.ben_email}<br />
+                <strong>Address Line 1:</strong> {editableBeneficiary.ben_addressline1}<br />
+                <strong>Address Line 2:</strong> {editableBeneficiary.ben_addressline2}<br />
+                <strong>City:</strong> {editableBeneficiary.ben_city}<br />
+                <strong>State:</strong> {editableBeneficiary.ben_state}<br />
+                <strong>Zip Code:</strong> {editableBeneficiary.ben_zipcode}<br />
+                <strong>Phone 1:</strong> {editableBeneficiary.ben_phone1}<br />
+                <strong>Phone 2:</strong> {editableBeneficiary.ben_phone2}<br />
+                <strong>Relationship:</strong> {editableBeneficiary.human?.ben_relationship}<br />
+                <strong>Birthdate:</strong> {editableBeneficiary.human?.ben_birthdate ? new Date(editableBeneficiary.human.ben_birthdate).toLocaleDateString() : ''}
+                </Card.Text>
+                <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
+            </Card.Body>
+            </Card>
   );
-  
-  const renderViewMode = () => (
-<Card>
-  <Card.Body>
-    <Card.Title>{editableBeneficiary.human?.ben_firstname} {editableBeneficiary.human?.ben_lastname}</Card.Title>
-    <Card.Text>
-      <strong>Email:</strong> {editableBeneficiary.human?.ben_email}<br />
-      <strong>Address Line 1:</strong> {editableBeneficiary.ben_addressline1}<br />
-      <strong>Address Line 2:</strong> {editableBeneficiary.ben_addressline2}<br />
-      <strong>City:</strong> {editableBeneficiary.ben_city}<br />
-      <strong>State:</strong> {editableBeneficiary.ben_state}<br />
-      <strong>Zip Code:</strong> {editableBeneficiary.ben_zipcode}<br />
-      <strong>Phone 1:</strong> {editableBeneficiary.ben_phone1}<br />
-      <strong>Phone 2:</strong> {editableBeneficiary.ben_phone2}<br />
-      <strong>Relationship:</strong> {editableBeneficiary.human?.ben_relationship}<br />
-      <strong>Birthdate:</strong> {editableBeneficiary.human?.ben_birthdate ? new Date(editableBeneficiary.human.ben_birthdate).toLocaleDateString() : ''}
-    </Card.Text>
-    <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
-  </Card.Body>
-</Card>
+
+  const renderOrganizationView = () => (
+    <Card>
+      <Card.Body>
+        <Card.Title>{editableBeneficiary.organization?.ben_org_name}</Card.Title>
+        <Card.Text>
+          <strong>Organization Type:</strong> {editableBeneficiary.organization?.ben_org_type}<br />
+          <strong>Address Line 1:</strong> {editableBeneficiary.ben_addressline1}<br />
+          <strong>Address Line 2:</strong> {editableBeneficiary.ben_addressline2}<br />
+          <strong>City:</strong> {editableBeneficiary.ben_city}<br />
+          <strong>State:</strong> {editableBeneficiary.ben_state}<br />
+          <strong>Zip Code:</strong> {editableBeneficiary.ben_zipcode}<br />
+          <strong>Phone 1:</strong> {editableBeneficiary.ben_phone1}<br />
+          <strong>Phone 2:</strong> {editableBeneficiary.ben_phone2}<br />
+        </Card.Text>
+        <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
+      </Card.Body>
+    </Card>
   );
 
 

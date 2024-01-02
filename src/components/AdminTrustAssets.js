@@ -4,6 +4,7 @@ import { Container, Card, Tooltip, OverlayTrigger, Button, ListGroup } from 'rea
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AdminTrustSidebar from './AdminSidebar';
+import AdminCardAssetPhysical from './AdminCardAssetPhysical';
 
 export default function AdminTrustAssets({}) {
     const [assets, setAssets] = useState(null);

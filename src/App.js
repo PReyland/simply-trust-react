@@ -11,6 +11,8 @@ import AdminListUsers from './components/AdminListUsers';
 import AdminSingleUser from './components/AdminSingleUser';
 import AdminListBeneficiaries from './components/AdminListBeneficiaries';
 import AdminSingleBeneficiary from './components/AdminSingleBeneficiary';
+import AdminListAssets from './components/AdminListAssets';
+import AdminSingleAsset from './components/AdminSingleAsset';
 
 
 
@@ -42,8 +44,10 @@ function App() {
         <Route path="/admin/" element={<AdminListTrusts />} />
         <Route path="/admin/trusts" element={<AdminListTrusts />} />
         <Route path="/admin/beneficiaries" element={<AdminListBeneficiaries />} />
+        <Route path="/admin/assets" element={<AdminListAssets />} />
         <Route path="/admin/users" element={<AdminListUsers />} />
         <Route path="/admin/user/:id/*" element={<AdminSingleUser />} />
+        <Route path="/admin/asset/:id/*" element={<AdminSingleAsset />} />
         <Route path="/admin/trust/:id/*" element={<AdminSingleTrust />} />
         <Route path="/admin/beneficiary/:id/*" element={<AdminSingleBeneficiary />} />
       </Routes>

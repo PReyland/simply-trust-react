@@ -10,7 +10,8 @@ export default function AdminNavbar() {
 
          <Link as={Link} to="/admin/trusts" style={{ textDecoration: 'none', color: 'inherit' }}>All Trusts</Link>
          <Link as={Link} to="/admin/users" style={{ textDecoration: 'none', color: 'inherit' }}>All Users</Link>
-  
+         <Link as={Link} to="/admin/assets" style={{ textDecoration: 'none', color: 'inherit' }}>All Assets</Link>
+         <Link as={Link} to="/admin/beneficiaries" style={{ textDecoration: 'none', color: 'inherit' }}>All Beneficiaries</Link>
 
     </Navbar>
   );

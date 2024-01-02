@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 export default function AdminCardUser({ userId }) {
   const [editableUser, setEditableUser] = useState({});
@@ -181,7 +182,9 @@ export default function AdminCardUser({ userId }) {
   const renderViewMode = () => (
     <Card>
       <Card.Body>
-        <Card.Title>{editableUser.user_firstname} {editableUser.user_lastname}</Card.Title>
+        <Link to={`/admin/user/${userId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+         <Card.Title>{editableUser.user_firstname} {editableUser.user_lastname}</Card.Title>
+         </Link>
         <Card.Text>
           <strong>Phone 1:</strong> {editableUser.user_phone1}<br/>
           <strong>Email:</strong> {editableUser.user_email}<br/>

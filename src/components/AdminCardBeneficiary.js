@@ -82,24 +82,7 @@ export default function AdminCardBeneficiary({ beneficiaryId }) {
           }
         }
       }
-    // // Handling for 'Organization' type
-    // else if (editableBeneficiary.ben_type === 'Organization') {
-    //   url = `http://127.0.0.1:5555/beneficiaries/organization/${beneficiaryId}`;
-    //   const organizationData = editableBeneficiary.organization;
-    //   const orgDataToPatch = {};
-    //   console.log("org data to patch", orgDataToPatch)
-  
-    //   for (const nestedKey in organizationData) {
-    //     if (organizationData[nestedKey] !== initialBeneficiary.organization[nestedKey]) {
-    //       orgDataToPatch[nestedKey] = organizationData[nestedKey];
-    //     }
-    //   }
-    //   if (Object.keys(orgDataToPatch).length > 0) {
-    //     dataToPatch.organization = orgDataToPatch;
-    //   }
-    // }
 
-    // Handle top-level properties for both types
     const topLevelKeys = ['ben_addressline1', 'ben_addressline2', 'ben_city', 'ben_state', 'ben_zipcode', 'ben_phone1', 'ben_phone2'];
     topLevelKeys.forEach(key => {
       if (editableBeneficiary[key] !== initialBeneficiary[key]) {

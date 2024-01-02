@@ -6,9 +6,10 @@ import { Link } from 'react-router-dom';
 import AdminTrustSidebar from './AdminSidebar';
 import AdminCardUser from './AdminCardUser';
 import AdminCardBeneficiary from './AdminCardBeneficiary';
+import AdminCardAssetPhysical from './AdminCardAssetPhysical';
 
-export default function AdminSingleBeneficiary() {
-    const [beneficiary, setBeneficiary] = useState({});
+export default function AdminSingleAsset() {
+    const [asset, setAsset] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     let { id } = useParams(); 
@@ -17,12 +18,12 @@ export default function AdminSingleBeneficiary() {
     useEffect(() => {
         const fetchBeneficiaryDetails = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:5555/admin/beneficiary/${id}`);
+                const response = await fetch(`http://127.0.0.1:5555/admin/physicalasset/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setBeneficiary(data);
+                setAsset(data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -35,9 +36,9 @@ export default function AdminSingleBeneficiary() {
         }
     }, [id]);
 
-    const navigateToBeneficiary = (change) => {
+    const navigateToAsset = (change) => {
         const newId = parseInt(id) + change;
-        navigate(`/admin/beneficiary/${newId}`);
+        navigate(`/admin/asset/${newId}`);
     };
 
     if (isLoading) {
@@ -54,23 +55,23 @@ export default function AdminSingleBeneficiary() {
                 <AdminTrustSidebar />
             </Container>    
             <Container className='trust-middle'>
-            <Button onClick={() => navigateToBeneficiary(-1)} disabled={parseInt(id) <= 1}>Previous</Button>
-                <Button onClick={() => navigateToBeneficiary(1)}>Next</Button>
-                <AdminCardBeneficiary beneficiaryId={id} />
+
+      
+            <Button onClick={() => navigateToAsset(-1)} disabled={parseInt(id) <= 1}>Previous</Button>
+                <Button onClick={() => navigateToAsset(1)}>Next</Button>
+
+                <AdminCardAssetPhysical physicalAssetId={id} />
+                <p><strong>Beneficiaries</strong></p>
+                <AdminCardBeneficiary beneficiaryId={asset.beneficiary.id} />
                 <div className='trust-container'>
                     <ListGroup>
-                        <p><strong>Associated Trusts</strong></p>
-                        {beneficiary.join_trusts && beneficiary.join_trusts.length > 0 ? (
-                            beneficiary.join_trusts.map(trust => (
-                                <ListGroup.Item key={trust.id} className="list-group-item-container">
-                                    <Link to={`/admin/trust/${trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        <h3>{trust.trust_name}</h3>
+                        <p><strong>Associated Trust</strong></p>
+                                      
+                                <ListGroup.Item key={asset.id} className="list-group-item-container">
+                                    <Link to={`/admin/trust/${asset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <h3>{asset.trust.trust_name}</h3>
                                     </Link>
                                 </ListGroup.Item>
-                            ))
-                        ) : (
-                            <p>No associated trusts.</p>
-                        )}
                     </ListGroup>
 
                     

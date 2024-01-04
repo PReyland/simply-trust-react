@@ -47,7 +47,7 @@ function App() {
         <Route path="/admin/assets" element={<AdminListAssets />} />
         <Route path="/admin/users" element={<AdminListUsers />} />
         <Route path="/admin/user/:id/*" element={<AdminSingleUser />} />
-        <Route path="/admin/asset/:id/*" element={<AdminSingleAsset />} />
+        <Route path="/admin/asset/p/:id/*" element={<AdminSingleAsset />} />
         <Route path="/admin/trust/:id/*" element={<AdminSingleTrust />} />
         <Route path="/admin/beneficiary/:id/*" element={<AdminSingleBeneficiary />} />
       </Routes>

@@ -182,7 +182,6 @@ export default function AdminTrustUsers() {
 
   return (
     <Container className='trust-middle'>
-      <h2>Users:</h2>
       <h3>Owners</h3>
       <ListGroup>
       {users.owners.map(user => (

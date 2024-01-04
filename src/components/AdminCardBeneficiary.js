@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 export default function AdminCardBeneficiary({ beneficiaryId }) {
   const [editableBeneficiary, setEditableBeneficiary] = useState({});
@@ -389,7 +390,9 @@ const renderOrganizationForm = () => (
       const renderHumanView = () => (
             <Card>
             <Card.Body>
+              <Link to={`/admin/beneficiary/${beneficiaryId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Card.Title>{editableBeneficiary.human?.ben_firstname} {editableBeneficiary.human?.ben_lastname}</Card.Title>
+                </Link>
                 <Card.Text>
                 <strong>Email:</strong> {editableBeneficiary.human?.ben_email}<br />
                 <strong>Address Line 1:</strong> {editableBeneficiary.ben_addressline1}<br />
@@ -410,7 +413,9 @@ const renderOrganizationForm = () => (
   const renderOrganizationView = () => (
     <Card>
       <Card.Body>
+      <Link to={`/admin/beneficiary/${beneficiaryId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <Card.Title>{editableBeneficiary.organization?.ben_org_name}</Card.Title>
+        </Link>
         <Card.Text>
           <strong>Organization Type:</strong> {editableBeneficiary.organization?.ben_org_type}<br />
           <strong>Address Line 1:</strong> {editableBeneficiary.ben_addressline1}<br />

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-export default function AdminCardAssetPhysical({ physicalAssetId }) {
+export default function AdminCardAssetPhysical({ physicalAssetId, adminProp }) {
   const [editableAsset, setEditableAsset] = useState({});
   const [initialAsset, setInitialAsset] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-console.log(physicalAssetId)
+
 
   useEffect(() => {
     const fetchBeneficiaryData = async () => {
@@ -31,6 +32,7 @@ console.log(physicalAssetId)
   }, [physicalAssetId]);
 
 
+  console.log(adminProp)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     console.log(`Input changed - Name: ${name}, Value: ${value}`);
@@ -38,7 +40,6 @@ console.log(physicalAssetId)
     setEditableAsset(prev => {
         const nameParts = name.split('.');
         
-        // Check if the name attribute contains a dot, indicating nested data
         if (nameParts.length === 2) {
             const [parent, child] = nameParts;
             return {
@@ -50,7 +51,6 @@ console.log(physicalAssetId)
             };
         }
 
-        // For non-nested fields, update normally
         return { ...prev, [name]: value };
     });
 };
@@ -59,38 +59,46 @@ console.log(physicalAssetId)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
   
-    let url;
+    const url = `http://127.0.0.1:5555/admin/physicalasset/${physicalAssetId}`;
     const dataToPatch = {};
   
-    // Handling for 'Human' type
-
-      url = `http://127.0.0.1:5555/admin/physicalasset/${physicalAssetId}`;
-      const humanData = editableAsset.human;
-  
-      for (const nestedKey in humanData) {
-        if (humanData[nestedKey] !== initialAsset.human[nestedKey]) {
-          dataToPatch[nestedKey] = humanData[nestedKey];
-        }
-      }
-    ;
-
-    const topLevelKeys = ['ben_addressline1', 'ben_addressline2', 'ben_city', 'ben_state', 'ben_zipcode', 'ben_phone1', 'ben_phone2'];
-    topLevelKeys.forEach(key => {
-      if (editableAsset[key] !== initialAsset[key]) {
+    // Handle top-level fields
+    Object.keys(editableAsset).forEach(key => {
+      if (editableAsset[key] !== initialAsset[key] && typeof editableAsset[key] !== 'object') {
         dataToPatch[key] = editableAsset[key];
       }
     });
   
+    // Define a list of nested objects
+    const nestedObjects = ['jewelry', 'house', 'car', 'art', 'other'];
+  
+    // Iterate over each nested object
+    nestedObjects.forEach(nestedObj => {
+      const nestedData = editableAsset[nestedObj];
+      const initialNestedData = initialAsset[nestedObj] || {};
+  
+      if (nestedData) {
+        Object.keys(nestedData).forEach(nestedKey => {
+          if (nestedData[nestedKey] !== initialNestedData[nestedKey]) {
+            // Check if dataToPatch already contains the nested object
+            if (!dataToPatch[nestedObj]) {
+              dataToPatch[nestedObj] = {}; // Initialize the nested object if it doesn't exist
+            }
+            dataToPatch[nestedObj][nestedKey] = nestedData[nestedKey]; // Update the nested object
+          }
+        });
+      }
+    });
+  
     try {
-        console.log('data patch array', dataToPatch)
-       
+      console.log('Data to patch:', dataToPatch);
+  
       const response = await fetch(url, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(dataToPatch),
-       
       });
   
       if (!response.ok) {
@@ -100,11 +108,11 @@ console.log(physicalAssetId)
       console.log("Physical Asset update successful");
       setIsEditing(false); // Close edit mode after successful update
     } catch (error) {
-      console.error("Failed to update Physcial Asset:", error);
+      console.error("Failed to update Physical Asset:", error);
     }
   };
   
-  
+
   const renderEditMode = () => {
     switch (editableAsset.pa_type) {
       case 'Jewelry':
@@ -142,7 +150,7 @@ const renderHouseForm = () => (
 
         <Form.Group>
             <Form.Label>Type:</Form.Label>
-            <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" />
+            <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" disabled/>
         </Form.Group>
 
         <Form.Group>
@@ -241,7 +249,7 @@ const renderCarForm = () => (
 
     <Form.Group>
         <Form.Label>Type:</Form.Label>
-        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" />
+        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" disabled />
     </Form.Group>
 
     <Form.Group>
@@ -292,11 +300,11 @@ const renderJewelryForm = () => (
             <Form.Label>Note:</Form.Label>
             <Form.Control as="textarea" name="pa_note" value={editableAsset.pa_note || ''} onChange={handleInputChange} placeholder="Note" />
         </Form.Group>
-
+       
         <Form.Group>
-            <Form.Label>Type:</Form.Label>
-            <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" />
-        </Form.Group>
+        <Form.Label>Type:</Form.Label>
+        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" disabled />
+    </Form.Group>
 
         <Form.Group>
             <Form.Label>Estimated Value:</Form.Label>
@@ -352,10 +360,10 @@ const renderArtForm = () => (
         <Form.Label>Note:</Form.Label>
         <Form.Control as="textarea" name="pa_note" value={editableAsset.pa_note || ''} onChange={handleInputChange} placeholder="Note" />
     </Form.Group>
-
+   
     <Form.Group>
         <Form.Label>Type:</Form.Label>
-        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" />
+        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" disabled />
     </Form.Group>
 
     <Form.Group>
@@ -425,7 +433,7 @@ const renderArtForm = () => (
 
     <Form.Group>
         <Form.Label>Type:</Form.Label>
-        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" />
+        <Form.Control type="text" name="pa_type" value={editableAsset.pa_type || ''} onChange={handleInputChange} placeholder="Type" disabled />
     </Form.Group>
 
     <Form.Group>
@@ -461,31 +469,44 @@ const renderViewMode = () => {
     }
 };
   
+     
+const renderCarView = () => (
+  <Card>
+    <Card.Body>
+      <Link to={`/admin/asset/p/${physicalAssetId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Card.Title>{editableAsset.pa_name}</Card.Title>
+      </Link>
+      <Card.Text>
+        <strong>Description:</strong> {editableAsset.pa_description}<br />
+        <strong>Note:</strong> {editableAsset.pa_note}<br />
+        <strong>Type:</strong> {editableAsset.pa_type}<br />
+        <strong>Estimated Value:</strong> {editableAsset.pa_value_estimate}<br />
+        <strong>License Plate:</strong> {editableAsset.car?.pa_license}<br />
+        <strong>Make:</strong> {editableAsset.car?.pa_make}<br />
+        <strong>Model:</strong> {editableAsset.car?.pa_model}<br />
+        <strong>Year:</strong> {editableAsset.car?.pa_year}<br />
+        <br></br>
+        {adminProp === true && (
+          <>
+            <strong>Associated Trust</strong>
+            <Link to={`/admin/trust/${editableAsset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h3>{editableAsset.trust.trust_name}</h3>
+            </Link>
+          </>
+        )}
+      </Card.Text>
+      <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
+    </Card.Body>
+  </Card>
+);
 
-
-        const renderCarView = () => (
-            <Card>
-            <Card.Body>
-              <Card.Title>{editableAsset.pa_name}</Card.Title>
-              <Card.Text>
-                <strong>Description:</strong> {editableAsset.pa_description}<br />
-                <strong>Note:</strong> {editableAsset.pa_note}<br />
-                <strong>Type:</strong> {editableAsset.pa_type}<br />
-                <strong>Estimated Value:</strong> {editableAsset.pa_value_estimate}<br />
-                <strong>License Plate:</strong> {editableAsset.car?.pa_license}<br />
-                <strong>Make:</strong> {editableAsset.car?.pa_make}<br />
-                <strong>Model:</strong> {editableAsset.car?.pa_model}<br />
-                <strong>Year:</strong> {editableAsset.car?.pa_year}<br />
-              </Card.Text>
-              <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
-            </Card.Body>
-          </Card>
-        );
 
         const renderHouseView = () => (
             <Card>
             <Card.Body>
+            <Link to={`/admin/asset/p/${physicalAssetId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Card.Title>{editableAsset.pa_name}</Card.Title>
+              </Link>
               <Card.Text>
                 <strong>Description:</strong> {editableAsset.pa_description}<br />
                 <strong>Note:</strong> {editableAsset.pa_note}<br />
@@ -497,6 +518,15 @@ const renderViewMode = () => {
                 <strong>Primary Residence:</strong> {editableAsset.house?.pa_primary ? 'Yes' : 'No'}<br />
                 <strong>Year Built:</strong> {editableAsset.house?.pa_year}<br />
                 <strong>Zip Code:</strong> {editableAsset.house?.pa_zipcode}<br />
+                {adminProp === true && (
+          <>
+            <strong>Associated Trust</strong>
+            <Link to={`/admin/trust/${editableAsset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h3>{editableAsset.trust.trust_name}</h3>
+            </Link>
+          </>
+        )}
+
               </Card.Text>
               <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
             </Card.Body>
@@ -506,7 +536,9 @@ const renderViewMode = () => {
         const renderJewelryView = () => (
             <Card>
               <Card.Body>
+              <Link to={`/admin/asset/p/${physicalAssetId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Card.Title>{editableAsset.pa_name}</Card.Title>
+                </Link>
                 <Card.Text>
                   <strong>Description:</strong> {editableAsset.pa_description}<br />
                   <strong>Note:</strong> {editableAsset.pa_note}<br />
@@ -517,6 +549,14 @@ const renderViewMode = () => {
                   <strong>Make:</strong> {editableAsset.jewelry?.pa_make}<br />
                   <strong>Metal:</strong> {editableAsset.jewelry?.pa_metal}<br />
                   <strong>Year:</strong> {editableAsset.jewelry?.pa_year}<br />
+                  {adminProp === true && (
+          <>
+            <strong>Associated Trust</strong>
+            <Link to={`/admin/trust/${editableAsset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h3>{editableAsset.trust.trust_name}</h3>
+            </Link>
+          </>
+        )}
                 </Card.Text>
                 <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
               </Card.Body>
@@ -526,7 +566,9 @@ const renderViewMode = () => {
         const renderArtView = () => (
             <Card>
               <Card.Body>
+              <Link to={`/admin/asset/p/${physicalAssetId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Card.Title>{editableAsset.pa_name}</Card.Title>
+                </Link>
                 <Card.Text>
                   <strong>Description:</strong> {editableAsset.pa_description}<br />
                   <strong>Note:</strong> {editableAsset.pa_note}<br />
@@ -539,6 +581,15 @@ const renderViewMode = () => {
                   <strong>Medium:</strong> {editableAsset.art?.pa_medium}<br />
                   <strong>Width:</strong> {editableAsset.art?.pa_width}<br />
                   <strong>Year:</strong> {editableAsset.art?.pa_year}<br />
+
+                  {adminProp === true && (
+          <>
+            <strong>Associated Trust</strong>
+            <Link to={`/admin/trust/${editableAsset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h3>{editableAsset.trust.trust_name}</h3>
+            </Link>
+          </>
+        )}
                 </Card.Text>
                 <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
               </Card.Body>
@@ -549,13 +600,24 @@ const renderViewMode = () => {
         const renderOtherView = () => (
             <Card>
               <Card.Body>
+              <Link to={`/admin/asset/p/${physicalAssetId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Card.Title>{editableAsset.pa_name}</Card.Title>
+                </Link>
                 <Card.Text>
                   <strong>Description:</strong> {editableAsset.pa_description}<br />
                   <strong>Note:</strong> {editableAsset.pa_note}<br />
                   <strong>Type:</strong> {editableAsset.pa_type}<br />
                   <strong>Estimated Value:</strong> {editableAsset.pa_value_estimate}<br />
                   <strong>Additional Description:</strong> {editableAsset.other?.pa_description}<br />
+
+                  {adminProp === true && (
+          <>
+            <strong>Associated Trust</strong>
+            <Link to={`/admin/trust/${editableAsset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h3>{editableAsset.trust.trust_name}</h3>
+            </Link>
+          </>
+        )}
                 </Card.Text>
                 <Button variant="primary" onClick={() => setIsEditing(true)}>Edit</Button>
               </Card.Body>

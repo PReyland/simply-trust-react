@@ -44,7 +44,7 @@ export default function AdminListAssets({}) {
             <Tab eventKey="humans" title="Physical Assets">
             <ListGroup>
                     {assets.map(dataObject => (
-                          <Link to={`/admin/asset/${dataObject.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          <Link to={`/admin/asset/p/${dataObject.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <ListGroup.Item key={dataObject.id} className="list-group-item-container">
                             <p>{dataObject.pa_type}</p>
                             <h3>{dataObject.pa_name}</h3>

@@ -48,10 +48,12 @@ export default function AdminTrustAssets({}) {
 
     <ListGroup>
                 {assets.map(dataObject => (
+                    <Link to={`/admin/asset/p/${dataObject.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListGroup.Item key={dataObject.id} className="list-group-item-container">
                         <h3>{dataObject.pa_name} </h3>
                         <p> Estimate Value: {dataObject.pa_value_estimate}</p>
                     </ListGroup.Item>
+                    </Link>
                 ))}
         </ListGroup>
 

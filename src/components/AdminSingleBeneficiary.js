@@ -4,8 +4,8 @@ import { Container, Form,  Modal, Card, Tooltip, OverlayTrigger, Button, ListGro
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import AdminTrustSidebar from './AdminSidebar';
-import AdminCardUser from './AdminCardUser';
 import AdminCardBeneficiary from './AdminCardBeneficiary';
+import AdminCardAssetPhysical from './AdminCardAssetPhysical';
 
 export default function AdminSingleBeneficiary() {
     const [beneficiary, setBeneficiary] = useState({});
@@ -13,6 +13,9 @@ export default function AdminSingleBeneficiary() {
     const [error, setError] = useState(null);
     let { id } = useParams(); 
     const navigate = useNavigate();
+    let adminOn = true
+
+
 
     useEffect(() => {
         const fetchBeneficiaryDetails = async () => {
@@ -48,10 +51,13 @@ export default function AdminSingleBeneficiary() {
         return <div>Error: {error}</div>;
     }
 
+    console.log(beneficiary)
+    console.log("testingadminon", adminOn)
+
     return (
         <div className='trust-container'>
             <Container className='trust-sidebar'>
-                <AdminTrustSidebar />
+            <AdminTrustSidebar />
             </Container>    
             <Container className='trust-middle'>
             <Button onClick={() => navigateToBeneficiary(-1)} disabled={parseInt(id) <= 1}>Previous</Button>
@@ -60,11 +66,11 @@ export default function AdminSingleBeneficiary() {
                 <div className='trust-container'>
                     <ListGroup>
                         <p><strong>Associated Trusts</strong></p>
-                        {beneficiary.join_trusts && beneficiary.join_trusts.length > 0 ? (
-                            beneficiary.join_trusts.map(trust => (
-                                <ListGroup.Item key={trust.id} className="list-group-item-container">
-                                    <Link to={`/admin/trust/${trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        <h3>{trust.trust_name}</h3>
+                        {beneficiary.physical_assets && beneficiary.physical_assets.length > 0 ? (
+                            beneficiary.physical_assets.map(asset => (
+                                <ListGroup.Item key={asset.trust.id} className="list-group-item-container">
+                                    <Link to={`/admin/trust/${asset.trust.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <h3>{asset.trust.trust_name}</h3>
                                     </Link>
                                 </ListGroup.Item>
                             ))
@@ -73,6 +79,18 @@ export default function AdminSingleBeneficiary() {
                         )}
                     </ListGroup>
 
+                    
+
+                    
+                    <ListGroup>
+                    <p><strong>Associated Assets</strong></p>
+                    {beneficiary.physical_assets.map(asset => (
+                        <ListGroup.Item key={asset.id} className="list-group-item-container">
+                       <AdminCardAssetPhysical physicalAssetId={asset.id} adminProp={adminOn} />
+
+                        </ListGroup.Item>
+                    ))}
+                    </ListGroup>
                     
                 </div>
             </Container>

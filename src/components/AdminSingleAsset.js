@@ -16,7 +16,7 @@ export default function AdminSingleAsset() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchBeneficiaryDetails = async () => {
+        const fetchAssetDetails = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:5555/admin/physicalasset/${id}`);
                 if (!response.ok) {
@@ -32,13 +32,13 @@ export default function AdminSingleAsset() {
         };
     
         if (id) {
-            fetchBeneficiaryDetails();
+            fetchAssetDetails();
         }
     }, [id]);
 
     const navigateToAsset = (change) => {
         const newId = parseInt(id) + change;
-        navigate(`/admin/asset/${newId}`);
+        navigate(`/admin/asset/p/${newId}`);
     };
 
     if (isLoading) {

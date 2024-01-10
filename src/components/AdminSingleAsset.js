@@ -62,7 +62,10 @@ export default function AdminSingleAsset() {
 
                 <AdminCardAssetPhysical physicalAssetId={id} />
                 <p><strong>Beneficiaries</strong></p>
-                <AdminCardBeneficiary beneficiaryId={asset.beneficiary.id} />
+                {asset.beneficiaries && asset.beneficiaries.map(beneficiary => (
+                    <AdminCardBeneficiary beneficiaryId={beneficiary.id} key={beneficiary.id} />
+                ))}
+
                 <div className='trust-container'>
                     <ListGroup>
                         <p><strong>Associated Trust</strong></p>
